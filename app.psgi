@@ -6,7 +6,7 @@
 			return [
 				200,
 				['Content-Type', 'text/plain'],
-				[ sprintf('Powered by %s', $ENV{'POWERED_BY'} || 'Ben') ],
+				[ sprintf('Powered by %s', $ENV{'POWERED_BY'} || 'Deis') ],
 			];
 
 	};
