@@ -79,14 +79,15 @@ If an ID is not provided, one will be auto-generated for you.
 Use `git push deis master` to deploy your application.
 
 	$ git push deis master
-	Counting objects: 65, done.
+	Counting objects: 8, done.
 	Delta compression using up to 4 threads.
-	Compressing objects: 100% (40/40), done.
-	Writing objects: 100% (65/65), 15.95 KiB, done.
-	Total 65 (delta 19), reused 61 (delta 18)
-	       Python app detected
-	-----> No runtime.txt provided; assuming python-2.7.4.
-	-----> Preparing Python runtime (python-2.7.4)
+	Compressing objects: 100% (6/6), done.
+	Writing objects: 100% (6/6), 3.12 KiB, done.
+	Total 6 (delta 3), reused 0 (delta 0)
+	       Perl/PSGI app detected
+	-----> Installing dependencies
+	-----> Installing Starman
+	       Starman is up to date. (0.4008)
 
 Once your application has been deployed, use `deis open` to view it in a browser. To find out more info about your application, use `deis info`.
 
@@ -100,15 +101,15 @@ To scale your application's [Docker](http://docker.io) containers, use `deis sca
 	
 	=== <appName> Containers
 	
-	--- web: `gunicorn -b 0.0.0.0:$PORT app:app`
-	web.1 up 2013-10-25T20:00:11.741Z (pythonFormation-runtime-1)
-	web.2 up 2013-10-25T20:04:37.133Z (pythonFormation-runtime-1)
-	web.3 up 2013-10-25T20:04:37.148Z (pythonFormation-runtime-1)
-	web.4 up 2013-10-25T20:04:37.162Z (pythonFormation-runtime-1)
-	web.5 up 2013-10-25T20:04:37.177Z (pythonFormation-runtime-1)
-	web.6 up 2013-10-25T20:04:37.194Z (pythonFormation-runtime-1)
-	web.7 up 2013-10-25T20:04:37.212Z (pythonFormation-runtime-1)
-	web.8 up 2013-10-25T20:04:37.231Z (pythonFormation-runtime-1)
+	--- web: `plackup --port $PORT ./app.psgi`
+	web.1 up 2013-11-04T22:06:53.492Z (dev-runtime-1)
+	web.2 up 2013-11-04T22:58:34.244Z (dev-runtime-1)
+	web.3 up 2013-11-04T22:58:34.258Z (dev-runtime-1)
+	web.4 up 2013-11-04T22:58:34.272Z (dev-runtime-1)
+	web.5 up 2013-11-04T22:58:34.288Z (dev-runtime-1)
+	web.6 up 2013-11-04T22:58:34.304Z (dev-runtime-1)
+	web.7 up 2013-11-04T22:58:34.322Z (dev-runtime-1)
+	web.8 up 2013-11-04T22:58:34.342Z (dev-runtime-1)
 
 
 ## Configure your Application
@@ -117,36 +118,37 @@ Deis applications are configured using environment variables. The example applic
 
 	$ curl -s http://yourapp.yourformation.com
 	Powered by Deis
-	$ deis config:set POWERED_BY=Python
+	$ deis config:set POWERED_BY=Perl
 	=== <appName>
-	POWERED_BY: Python
+	POWERED_BY: Perl
 	$ curl -s http://yourapp.yourformation.com
-	Powered by Python
+	Powered by Perl
 
 `deis config:set` is also how you connect your application to backing services like databases, queues and caches. You can use `deis run` to execute one-off commands against your application for things like database administration, initial application setup and inspecting your container environment.
 
 	$ deis run ls -la
-	total 56
-	drwxr-xr-x  4 root root 4096 Oct 25 20:03 .
-	drwxr-xr-x 57 root root 4096 Oct 25 20:05 ..
-	-rw-r--r--  1 root root  237 Oct 25 19:59 .gitignore
-	drwxr-xr-x  3 root root 4096 Oct 25 19:59 .heroku
-	drwxr-xr-x  2 root root 4096 Oct 25 19:59 .profile.d
-	-rw-r--r--  1 root root   18 Oct 25 19:59 .release
-	-rw-r--r--  1 root root  553 Oct 25 19:59 LICENSE
-	-rw-r--r--  1 root root   39 Oct 25 19:59 Procfile
-	-rw-r--r--  1 root root 7829 Oct 25 19:59 README.md
-	-rw-r--r--  1 root root  330 Oct 25 19:59 app.py
-	-rw-r--r--  1 root root  602 Oct 25 20:03 app.pyc
-	-rw-r--r--  1 root root   40 Oct 25 19:59 requirements.txt
-	-rw-r--r--  1 root root   13 Oct 25 19:59 runtime.txt
+	total 52
+	drwxr-xr-x  6 root root 4096 Nov  4 22:57 .
+	drwxr-xr-x 57 root root 4096 Nov  4 22:59 ..
+	drwxr-xr-x  2 root root 4096 Nov  4 22:57 .profile.d
+	-rw-r--r--  1 root root  181 Nov  4 22:57 .release
+	-rw-r--r--  1 root root 1083 Nov  4 22:57 LICENSE.txt
+	-rw-r--r--  1 root root   37 Nov  4 22:57 Procfile
+	-rw-r--r--  1 root root 6913 Nov  4 22:57 README.md
+	-rwxr-xr-x  1 root root  197 Nov  4 22:57 app.psgi
+	drwxr-xr-x  2 root root 4096 Nov  4 22:57 cgi-bin
+	-rw-r--r--  1 root root  106 Nov  4 22:57 cpanfile
+	drwxr-xr-x  2 root root 4096 Nov  4 22:57 htdocs
+	drwxrwxr-x  5 root root 4096 Nov  4 22:05 local
 
 ## Troubleshoot your Application
 
 To view your application's log output, including any errors or stack traces, use `deis logs`.
 
-    $ deis logs
-    <show output>
+	$ deis logs
+	Nov  4 22:58:48 ip-172-31-3-111 jagged-inventor[web.8]: find: `/app/.profile.d/*.sh': No such file or directory
+	Nov  4 22:58:48 ip-172-31-3-111 jagged-inventor[web.7]: HTTP::Server::PSGI: Accepting connections at http://0:10007/
+	Nov  4 22:58:48 ip-172-31-3-111 jagged-inventor[web.8]: HTTP::Server::PSGI: Accepting connections at http://0:10008/
 
 ## Additional Resources
 
