@@ -9,7 +9,7 @@ We assume you have access to an existing Deis cluster. If not, please review the
 Use the following command to create an application on an existing Deis cluster.
 
     $ deis create
-	Creating application... done, created <appName>
+	Creating application... done, created cubist-quacking
 	Git remote deis added
     
 If an ID is not provided, one will be auto-generated for you.
@@ -35,60 +35,54 @@ Once your application has been deployed, use `deis open` to view it in a browser
 
 To scale your application's [Docker](http://docker.io) containers, use `deis scale` and specify the number of containers for each process type defined in your application's `Procfile`. For example, `deis scale web=8`.
 
-	$ deis scale web=8
-	Scaling containers... but first, coffee!
-	done in 16s
-	
-	=== <appName> Containers
-	
-	--- web: `plackup --port $PORT ./app.psgi`
-	web.1 up 2013-11-04T22:06:53.492Z (dev-runtime-1)
-	web.2 up 2013-11-04T22:58:34.244Z (dev-runtime-1)
-	web.3 up 2013-11-04T22:58:34.258Z (dev-runtime-1)
-	web.4 up 2013-11-04T22:58:34.272Z (dev-runtime-1)
-	web.5 up 2013-11-04T22:58:34.288Z (dev-runtime-1)
-	web.6 up 2013-11-04T22:58:34.304Z (dev-runtime-1)
-	web.7 up 2013-11-04T22:58:34.322Z (dev-runtime-1)
-	web.8 up 2013-11-04T22:58:34.342Z (dev-runtime-1)
+    $ deis scale web=8
+    Scaling processes... but first, coffee!
+    done in 8s
 
+    === cubist-quacking Processes
+
+    --- web:
+    web.1 up (v3)
+    web.2 up (v3)
+    web.3 up (v3)
+    web.4 up (v3)
+    web.5 up (v3)
+    web.6 up (v3)
+    web.7 up (v3)
+    web.8 up (v3)
 
 ## Configure your Application
 
 Deis applications are configured using environment variables. The example application includes a special `POWERED_BY` variable to help demonstrate how you would provide application-level configuration. 
 
-	$ curl -s http://yourapp.fqdn.com
+	$ curl -s http://cubist-quacking.fqdn.com
 	Powered by Deis
 	$ deis config:set POWERED_BY=Perl
-	=== <appName>
+	=== cubist-quacking
 	POWERED_BY: Perl
-	$ curl -s http://yourapp.fqdn.com
+	$ curl -s http://cubist-quacking.fqdn.com
 	Powered by Perl
 
 `deis config:set` is also how you connect your application to backing services like databases, queues and caches. You can use `deis run` to execute one-off commands against your application for things like database administration, initial application setup and inspecting your container environment.
 
-	$ deis run ls -la
-	total 52
-	drwxr-xr-x  6 root root 4096 Nov  4 22:57 .
-	drwxr-xr-x 57 root root 4096 Nov  4 22:59 ..
-	drwxr-xr-x  2 root root 4096 Nov  4 22:57 .profile.d
-	-rw-r--r--  1 root root  181 Nov  4 22:57 .release
-	-rw-r--r--  1 root root 1083 Nov  4 22:57 LICENSE.txt
-	-rw-r--r--  1 root root   37 Nov  4 22:57 Procfile
-	-rw-r--r--  1 root root 6913 Nov  4 22:57 README.md
-	-rwxr-xr-x  1 root root  197 Nov  4 22:57 app.psgi
-	drwxr-xr-x  2 root root 4096 Nov  4 22:57 cgi-bin
-	-rw-r--r--  1 root root  106 Nov  4 22:57 cpanfile
-	drwxr-xr-x  2 root root 4096 Nov  4 22:57 htdocs
-	drwxrwxr-x  5 root root 4096 Nov  4 22:05 local
+	$ deis run env
+    HOSTNAME=5b2a94820bbc
+    POWERED_BY=Perl
+    PATH=local/bin:/usr/local/bin:/usr/bin:/bin
+    _=/usr/bin/env
+    PWD=/app
+    HOME=/app
+    SHLVL=2
 
 ## Troubleshoot your Application
 
 To view your application's log output, including any errors or stack traces, use `deis logs`.
 
 	$ deis logs
-	Nov  4 22:58:48 ip-172-31-3-111 jagged-inventor[web.8]: find: `/app/.profile.d/*.sh': No such file or directory
-	Nov  4 22:58:48 ip-172-31-3-111 jagged-inventor[web.7]: HTTP::Server::PSGI: Accepting connections at http://0:10007/
-	Nov  4 22:58:48 ip-172-31-3-111 jagged-inventor[web.8]: HTTP::Server::PSGI: Accepting connections at http://0:10008/
+    2014-05-05 19:47:27 172.17.8.100:38929 cubist-quacking[web.1]: 2014/05/05-19:47:27 Starman::Server (type Net::Server::PreFork) starting! pid(16)
+    2014-05-05 19:47:27 172.17.8.100:38929 cubist-quacking[web.1]: Resolved [*]:5000 to [0.0.0.0]:5000, IPv4
+    2014-05-05 19:47:27 172.17.8.100:38929 cubist-quacking[web.1]: Binding to TCP port 5000 on host 0.0.0.0 with IPv4
+    2014-05-05 19:47:27 172.17.8.100:38929 cubist-quacking[web.1]: Setting gid to "0 0"
 
 ## Additional Resources
 
