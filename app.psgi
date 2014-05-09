@@ -1,12 +1,8 @@
-	#!/usr/bin/env plackup
+use Mojolicious::Lite;
 
-	my $app = sub {
-			my $env = shift;
-			
-			return [
-				200,
-				['Content-Type', 'text/plain'],
-				[ sprintf('Powered by %s', $ENV{'POWERED_BY'} || 'Deis') ],
-			];
+get '/' => sub {
+    my $self = shift;
+    $self->render(text => sprintf('Powered by %s', $ENV{'POWERED_BY'} || 'Deis'));
+};
 
-	};
+app->start;
