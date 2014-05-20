@@ -2,87 +2,91 @@
 
 This guide will walk you through deploying a Perl application on Deis.
 
-## Create a new Application
-
-We assume you have access to an existing Deis cluster. If not, please review the Deis [installation instuctions](http://docs.deis.io/en/latest/operations/provision-controller/).
-
-Use the following command to create an application on an existing Deis cluster.
+## Usage
 
     $ deis create
-	Creating application... done, created cubist-quacking
-	Git remote deis added
-    
-If an ID is not provided, one will be auto-generated for you.
+    Creating application... done, created upbeat-villager
+    Git remote deis added
+    $ git push deis master
+    Counting objects: 31, done.
+    Delta compression using up to 8 threads.
+    Compressing objects: 100% (16/16), done.
+    Writing objects: 100% (31/31), 7.35 KiB | 0 bytes/s, done.
+    Total 31 (delta 10), reused 31 (delta 10)
+    -----> Perl/PSGI app detected
+    -----> Bootstrapping cpanm
+           Successfully installed App-cpanminus-1.7004
+           1 distribution installed
+    -----> Installing dependencies
+           Successfully installed Mojolicious-4.99
+           1 distribution installed
+    -----> Installing Starman
+           Successfully installed Test-Harness-3.30
+           Successfully installed ExtUtils-Helpers-0.022
+           Successfully installed ExtUtils-Config-0.007
+           Successfully installed ExtUtils-InstallPaths-0.010
+           Successfully installed Module-Build-Tiny-0.036
+           Successfully installed File-ShareDir-Install-0.08
+           Successfully installed ExtUtils-MakeMaker-6.98 (upgraded from 6.57_05)
+           Successfully installed Test-Requires-0.07
+           Successfully installed Stream-Buffered-0.02
+           Successfully installed Test-SharedFork-0.24
+           Successfully installed Test-TCP-2.02
+           Successfully installed Class-Inspector-1.28
+           Successfully installed File-ShareDir-1.102
+           Successfully installed HTTP-Tiny-0.043 (upgraded from 0.012)
+           Successfully installed Hash-MultiValue-0.15
+           Successfully installed Try-Tiny-0.22
+           Successfully installed URI-1.60
+           Successfully installed Devel-StackTrace-1.32
+           Successfully installed POSIX-strftime-Compiler-0.31
+           Successfully installed Apache-LogFormat-Compiler-0.30
+           Successfully installed LWP-MediaTypes-6.02
+           Successfully installed Encode-Locale-1.03
+           Successfully installed IO-HTML-1.00
+           Successfully installed HTTP-Date-6.02
+           Successfully installed HTTP-Message-6.06
+           Successfully installed HTTP-Body-1.19
+           Successfully installed Filesys-Notify-Simple-0.12
+           Successfully installed Devel-StackTrace-AsHTML-0.14
+           Successfully installed Plack-1.0030
+           Successfully installed Net-Server-2.008
+           Successfully installed HTTP-Parser-XS-0.16
+           Successfully installed Data-Dump-1.22
+           Successfully installed Starman-0.4009
+           33 distributions installed
+    -----> Discovering process types
+           Default process types for Perl/PSGI -> web
+    -----> Compiled slug size is 2.1M
+    -----> Building Docker image
+    Uploading context 2.168 MB
+    Uploading context
+    Step 0 : FROM deis/slugrunner
+     ---> 5567a808891d
+    Step 1 : RUN mkdir -p /app
+     ---> Using cache
+     ---> 928145890a08
+    Step 2 : ADD slug.tgz /app
+     ---> ebd37e44d6df
+    Removing intermediate container 6a425737c3af
+    Step 3 : ENTRYPOINT ["/runner/init"]
+     ---> Running in 530c9f5b931a
+     ---> 73bd9513ee35
+    Removing intermediate container 530c9f5b931a
+    Successfully built 73bd9513ee35
+    -----> Pushing image to private registry
 
-## Deploy your Application
+           Launching... done, v2
 
-Use `git push deis master` to deploy your application.
+    -----> upbeat-villager deployed to Deis
+           http://upbeat-villager.local.deisapp.com
 
-	$ git push deis master
-	Counting objects: 8, done.
-	Delta compression using up to 4 threads.
-	Compressing objects: 100% (6/6), done.
-	Writing objects: 100% (6/6), 3.12 KiB, done.
-	Total 6 (delta 3), reused 0 (delta 0)
-	       Perl/PSGI app detected
-	-----> Installing dependencies
-	-----> Installing Starman
-	       Starman is up to date. (0.4008)
+           To learn more, use `deis help` or visit http://deis.io
 
-Once your application has been deployed, use `deis open` to view it in a browser. To find out more info about your application, use `deis info`.
-
-## Scale your Application
-
-To scale your application's [Docker](http://docker.io) containers, use `deis scale` and specify the number of containers for each process type defined in your application's `Procfile`. For example, `deis scale web=8`.
-
-    $ deis scale web=8
-    Scaling processes... but first, coffee!
-    done in 8s
-
-    === cubist-quacking Processes
-
-    --- web:
-    web.1 up (v3)
-    web.2 up (v3)
-    web.3 up (v3)
-    web.4 up (v3)
-    web.5 up (v3)
-    web.6 up (v3)
-    web.7 up (v3)
-    web.8 up (v3)
-
-## Configure your Application
-
-Deis applications are configured using environment variables. The example application includes a special `POWERED_BY` variable to help demonstrate how you would provide application-level configuration. 
-
-	$ curl -s http://cubist-quacking.fqdn.com
-	Powered by Deis
-	$ deis config:set POWERED_BY=Perl
-	=== cubist-quacking
-	POWERED_BY: Perl
-	$ curl -s http://cubist-quacking.fqdn.com
-	Powered by Perl
-
-`deis config:set` is also how you connect your application to backing services like databases, queues and caches. You can use `deis run` to execute one-off commands against your application for things like database administration, initial application setup and inspecting your container environment.
-
-	$ deis run env
-    HOSTNAME=5b2a94820bbc
-    POWERED_BY=Perl
-    PATH=local/bin:/usr/local/bin:/usr/bin:/bin
-    _=/usr/bin/env
-    PWD=/app
-    HOME=/app
-    SHLVL=2
-
-## Troubleshoot your Application
-
-To view your application's log output, including any errors or stack traces, use `deis logs`.
-
-	$ deis logs
-    2014-05-05 19:47:27 172.17.8.100:38929 cubist-quacking[web.1]: 2014/05/05-19:47:27 Starman::Server (type Net::Server::PreFork) starting! pid(16)
-    2014-05-05 19:47:27 172.17.8.100:38929 cubist-quacking[web.1]: Resolved [*]:5000 to [0.0.0.0]:5000, IPv4
-    2014-05-05 19:47:27 172.17.8.100:38929 cubist-quacking[web.1]: Binding to TCP port 5000 on host 0.0.0.0 with IPv4
-    2014-05-05 19:47:27 172.17.8.100:38929 cubist-quacking[web.1]: Setting gid to "0 0"
+    To ssh://git@local.deisapp.com:2222/upbeat-villager.git
+     * [new branch]      master -> master
+    $ curl http://upbeat-villager.local.deisapp.com
+    Powered by Deis
 
 ## Additional Resources
 
