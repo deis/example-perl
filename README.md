@@ -4,89 +4,86 @@ This guide will walk you through deploying a Perl application on Deis.
 
 ## Usage
 
-    $ deis create
-    Creating application... done, created upbeat-villager
-    Git remote deis added
-    $ git push deis master
-    Counting objects: 31, done.
-    Delta compression using up to 8 threads.
-    Compressing objects: 100% (16/16), done.
-    Writing objects: 100% (31/31), 7.35 KiB | 0 bytes/s, done.
-    Total 31 (delta 10), reused 31 (delta 10)
-    -----> Perl/PSGI app detected
-    -----> Bootstrapping cpanm
-           Successfully installed App-cpanminus-1.7004
-           1 distribution installed
-    -----> Installing dependencies
-           Successfully installed Mojolicious-4.99
-           1 distribution installed
-    -----> Installing Starman
-           Successfully installed Test-Harness-3.30
-           Successfully installed ExtUtils-Helpers-0.022
-           Successfully installed ExtUtils-Config-0.007
-           Successfully installed ExtUtils-InstallPaths-0.010
-           Successfully installed Module-Build-Tiny-0.036
-           Successfully installed File-ShareDir-Install-0.08
-           Successfully installed ExtUtils-MakeMaker-6.98 (upgraded from 6.57_05)
-           Successfully installed Test-Requires-0.07
-           Successfully installed Stream-Buffered-0.02
-           Successfully installed Test-SharedFork-0.24
-           Successfully installed Test-TCP-2.02
-           Successfully installed Class-Inspector-1.28
-           Successfully installed File-ShareDir-1.102
-           Successfully installed HTTP-Tiny-0.043 (upgraded from 0.012)
-           Successfully installed Hash-MultiValue-0.15
-           Successfully installed Try-Tiny-0.22
-           Successfully installed URI-1.60
-           Successfully installed Devel-StackTrace-1.32
-           Successfully installed POSIX-strftime-Compiler-0.31
-           Successfully installed Apache-LogFormat-Compiler-0.30
-           Successfully installed LWP-MediaTypes-6.02
-           Successfully installed Encode-Locale-1.03
-           Successfully installed IO-HTML-1.00
-           Successfully installed HTTP-Date-6.02
-           Successfully installed HTTP-Message-6.06
-           Successfully installed HTTP-Body-1.19
-           Successfully installed Filesys-Notify-Simple-0.12
-           Successfully installed Devel-StackTrace-AsHTML-0.14
-           Successfully installed Plack-1.0030
-           Successfully installed Net-Server-2.008
-           Successfully installed HTTP-Parser-XS-0.16
-           Successfully installed Data-Dump-1.22
-           Successfully installed Starman-0.4009
-           33 distributions installed
-    -----> Discovering process types
-           Default process types for Perl/PSGI -> web
-    -----> Compiled slug size is 2.1M
-    -----> Building Docker image
-    Uploading context 2.168 MB
-    Uploading context
-    Step 0 : FROM deis/slugrunner
-     ---> 5567a808891d
-    Step 1 : RUN mkdir -p /app
-     ---> Using cache
-     ---> 928145890a08
-    Step 2 : ADD slug.tgz /app
-     ---> ebd37e44d6df
-    Removing intermediate container 6a425737c3af
-    Step 3 : ENTRYPOINT ["/runner/init"]
-     ---> Running in 530c9f5b931a
-     ---> 73bd9513ee35
-    Removing intermediate container 530c9f5b931a
-    Successfully built 73bd9513ee35
-    -----> Pushing image to private registry
+```console
+$ deis create --buildpack https://github.com/miyagawa/heroku-buildpack-perl.git
+Creating application... done, created violet-valkyrie
+Creating config... done, v2
 
-           Launching... done, v2
+=== violet-valkyrie
+BUILDPACK_URL: https://github.com/miyagawa/heroku-buildpack-perl.git
+Git remote deis added
+$ git push deis master
+Counting objects: 34, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (29/29), done.
+Writing objects: 100% (34/34), 8.73 KiB | 0 bytes/s, done.
+Total 34 (delta 10), reused 0 (delta 0)
+-----> Fetching custom buildpack
+-----> Perl/PSGI app detected
+-----> Bootstrapping cpanm
+       Successfully installed App-cpanminus-1.7039
+       1 distribution installed
+-----> Installing dependencies
+       Successfully installed IO-Socket-IP-0.37
+       Successfully installed Mojolicious-6.13
+       2 distributions installed
+-----> Installing Starman
+       Successfully installed ExtUtils-Helpers-0.022
+       Successfully installed Test-Harness-3.35
+...
+       33 distributions installed
+-----> Discovering process types
+       Default process types for Perl/PSGI -> web
+-----> Compiled slug size is 1.8M
 
-    -----> upbeat-villager deployed to Deis
-           http://upbeat-villager.local.deisapp.com
+-----> Building Docker image
+remote: Sending build context to Docker daemon 1.891 MB
+remote: build context to Docker daemon
+Step 0 : FROM deis/slugrunner
+ ---> 7fca3523a364
+Step 1 : RUN mkdir -p /app
+ ---> Running in 0ce46da6b681
+ ---> 00a2c877647c
+Removing intermediate container 0ce46da6b681
+Step 2 : WORKDIR /app
+ ---> Running in d97e97c3de1a
+ ---> 8f89e6fa7416
+Removing intermediate container d97e97c3de1a
+Step 3 : ENTRYPOINT /runner/init
+ ---> Running in 55b94ecb8863
+ ---> f4b53afbab5c
+Removing intermediate container 55b94ecb8863
+Step 4 : ADD slug.tgz /app
+ ---> fde80f19d0c5
+Removing intermediate container 3d32fdbe942a
+Step 5 : ENV GIT_SHA 0555569d98dd2be21647ec328adc0548542fe93e
+ ---> Running in c0ec02eac12b
+ ---> 813686a33583
+Removing intermediate container c0ec02eac12b
+Successfully built 813686a33583
+-----> Pushing image to private registry
 
-           To learn more, use `deis help` or visit http://deis.io
+-----> Launching...
+       done, violet-valkyrie:v3 deployed to Deis
 
-    To ssh://git@local.deisapp.com:2222/upbeat-villager.git
-     * [new branch]      master -> master
-    $ curl http://upbeat-villager.local.deisapp.com
-    Powered by Deis
+       http://violet-valkyrie.local3.deisapp.com
+
+       To learn more, use `deis help` or visit http://deis.io
+
+To ssh://git@deis.local3.deisapp.com:2222/violet-valkyrie.git
+ * [new branch]      master -> master
+$ curl http://violet-valkyrie.local3.deisapp.com
+Powered by Deis
+$ deis config:set POWERED_BY="Engine Yard"
+Creating config... done, v4
+
+=== violet-valkyrie
+DEIS_APP: violet-valkyrie
+BUILDPACK_URL: https://github.com/miyagawa/heroku-buildpack-perl.git
+POWERED_BY: Engine Yard
+$ curl http://violet-valkyrie.local3.deisapp.com
+Powered by Engine Yard
+```
 
 ## Additional Resources
 
